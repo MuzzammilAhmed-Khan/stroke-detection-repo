@@ -1,0 +1,33 @@
+{% extends "base2.html" %}
+
+{% block title %}Upload{% endblock %}
+
+{% block content %}
+  <!-- service section -->
+  <section class="service_section layout_padding">
+    <div class="service_container">
+      <div class="container ">
+        <div class="heading_container heading_center">
+          <h2><span>Upload</span></h2>
+        </div>
+        <div class="row text-center">
+          <div class="col-md-4  mx-auto" >
+            <div class="box" style="border: 1px solid #ccc; padding: 10px;">
+              <div class="img-box" style="max-width: 100%; height: auto;">
+                <img src="static/images/s2.png" alt="">
+              </div>
+              <div class="detail-box" style="margin-top: 10px;">
+                <form action="/preview" method="post" enctype="multipart/form-data">
+                  <input type="file" id="datasetfile" name="datasetfile" placeholder="Upload" required>
+                  <input type="submit" value="Upload">
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- end service section -->
+  {% endblock %}

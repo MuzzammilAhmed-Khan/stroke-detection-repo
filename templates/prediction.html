@@ -1,0 +1,698 @@
+{% extends "base2.html" %}
+
+{% block title %}Prediction{% endblock %}
+
+{% block content %}
+
+  <!-- team section -->
+  <section class="team_section layout_padding">
+    <div class="container-fluid">
+      <div class="heading_container heading_center">
+        <h2 class="">
+           <span> Prediction</span>
+        </h2>
+      </div>
+
+      <form action="/predictions" method="post">
+      <div class="team_container">
+        <div class="row " style="text-align: center;" >
+          <div class="col-lg-4 col-sm-8 mx-auto">
+            <div class="box ">
+              <div class="detail-box">
+                <div style="text-align: center;">
+                <h5>Gender</h5>
+                <label><input type="radio" id="gender" name="gender" value="0" {% if form_data and form_data.gender == '0' %}checked{% endif %} required>Female
+                </label>
+                <label><input type="radio" id="gender" name="gender" value="1" {% if form_data and form_data.gender == '1' %}checked{% endif %} required>Male
+                </label>
+                <label><input type="radio" id="gender" name="gender" value="2" {% if form_data and form_data.gender == '2' %}checked{% endif %} required>Other
+                </label>
+                <h5>Age</h5>
+                <input type="number" id="age" name="age" placeholder="Enter age" value="{% if form_data and form_data.age %}{{ form_data.age }}{% endif %}" required>
+                <h5>Hypertension</h5>
+                
+                <label><input type="radio" name="hypertension" id="hypertension" value="0" {% if form_data and form_data.hypertension == '0' %}checked{% endif %} required>No</label>
+                
+                <label><input type="radio" name="hypertension" id="hypertension" value="1" {% if form_data and form_data.hypertension == '1' %}checked{% endif %} required>Yes</label>
+                <h5>Heart Disease</h5>
+                <select id="heart_disease" name="heart_disease" required> 
+                  <option value="0" {% if form_data and form_data.heart_disease == '0' %}selected{% endif %}>No</option>
+                  <option value="1" {% if form_data and form_data.heart_disease == '1' %}selected{% endif %}>Yes</option>
+                </select>
+                <h5>Ever Married</h5>
+                <select id="ever_married" name="ever_married" required> 
+                  <option value="0" {% if form_data and form_data.ever_married == '0' %}selected{% endif %}>No</option>
+                  <option value="1" {% if form_data and form_data.ever_married == '1' %}selected{% endif %}>Yes</option>
+                </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-sm-8 mx-auto">
+            <div class="box ">
+              <div class="detail-box">
+                <div style="text-align: center;"></div>
+                <h5>Work Type</h5>
+                <select id="work_type" name="work_type" required> 
+                  <option value="0" {% if form_data and form_data.work_type == '0' %}selected{% endif %}>Govt_job</option>
+                  <option value="1" {% if form_data and form_data.work_type == '1' %}selected{% endif %}>Never_worked</option>
+                  <option value="2" {% if form_data and form_data.work_type == '2' %}selected{% endif %}>Private</option>
+                  <option value="3" {% if form_data and form_data.work_type == '3' %}selected{% endif %}>Self-employed</option>
+                  <option value="4" {% if form_data and form_data.work_type == '4' %}selected{% endif %}>Children</option>
+                </select>
+                <h5>Residence Type</h5>
+                <label><input type="radio" id="Residence_type" name="Residence_type" value="0" {% if form_data and form_data.Residence_type == '0' %}checked{% endif %} required>Rural
+                </label>
+                <label><input type="radio" id="Residence_type" name="Residence_type" value="1" {% if form_data and form_data.Residence_type == '1' %}checked{% endif %} required>Urban
+                </label>
+                <h5>Avg Glucose Level</h5>
+                <input type="text" id="avg_glucose_level" name="avg_glucose_level" placeholder="Enter avg_glucose_level" value="{% if form_data and form_data.avg_glucose_level %}{{ form_data.avg_glucose_level }}{% endif %}" required>
+                <h5>BMI</h5>
+                <input type="text" id="bmi" name="bmi" placeholder="Enter bmi" value="{% if form_data and form_data.bmi %}{{ form_data.bmi }}{% endif %}" required>
+                <h5>smoking_status</h5>
+                <select id="smoking_status" name="smoking_status" required> 
+                  <option value="0" {% if form_data and form_data.smoking_status == '0' %}selected{% endif %}>Unknown</option>
+                  <option value="1" {% if form_data and form_data.smoking_status == '1' %}selected{% endif %}>Formerly Smoked</option>
+                  <option value="2" {% if form_data and form_data.smoking_status == '2' %}selected{% endif %}>Never Smoked</option>
+                  <option value="3" {% if form_data and form_data.smoking_status == '3' %}selected{% endif %}>Smokes</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <input type="submit" value="Predict" >
+          {% if risk_assessment %}
+          <div class="enhanced-results">
+            <h3 class="risk-alert {{ risk_assessment.risk_category.lower() }}">{{ risk_assessment.alert_level }}</h3>
+            <div class="risk-details">
+              <p class="recommendation">{{ risk_assessment.recommendation }}</p>
+            </div>
+          </div>
+          {% else %}
+          <h3 style="color: lime;"> {{output}}</h3>
+          {% endif %}
+      
+        </div>
+        
+        <!-- Enhanced Risk Assessment Section -->
+        {% if risk_assessment %}
+        <div class="risk-assessment-container">
+          <div class="heading_container heading_center">
+            <h2><span>Enhanced Risk Assessment</span></h2>
+          </div>
+          
+          <!-- Risk Metrics -->
+          <div class="risk-metrics">
+            <div class="row">
+              <div class="col-md-3">
+                <div class="metric-box">
+                  <h4>Risk Category</h4>
+                  <p class="risk-category {{ risk_assessment.risk_category.lower() }}">{{ risk_assessment.risk_category }}</p>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="metric-box">
+                  <h4>Ensemble Probability</h4>
+                  <p class="probability-value">{{ "%.1f"|format(risk_assessment.ensemble_probability * 100) }}%</p>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="metric-box">
+                  <h4>Clinical Score</h4>
+                  <p class="clinical-score">{{ risk_assessment.clinical_score }}/20</p>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="metric-box">
+                  <h4>Detection Method</h4>
+                  <p class="detection-method">{{ risk_assessment.detection_method }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Model Comparison -->
+          {% if ensemble_info %}
+          <div class="model-comparison">
+            <h3 class="section-title">🔬 Model Analysis</h3>
+            <div class="model-results">
+              <div class="model-item">
+                <span class="model-name">Primary Model (XGBoost)</span>
+                <span class="model-prob">{{ "%.1f"|format(ensemble_info.model1_prob * 100) }}%</span>
+                <div class="prob-bar">
+                  <div class="prob-fill" style="width: {{ (ensemble_info.model1_prob * 100)|round }}%"></div>
+                </div>
+              </div>
+              <div class="model-item">
+                <span class="model-name">Secondary Model (XGB+RF)</span>
+                <span class="model-prob">{{ "%.1f"|format(ensemble_info.model2_prob * 100) }}%</span>
+                <div class="prob-bar">
+                  <div class="prob-fill" style="width: {{ (ensemble_info.model2_prob * 100)|round }}%"></div>
+                </div>
+              </div>
+              <div class="model-item ensemble">
+                <span class="model-name">Ensemble (Maximum)</span>
+                <span class="model-prob">{{ "%.1f"|format(ensemble_info.ensemble_prob * 100) }}%</span>
+                <div class="prob-bar">
+                  <div class="prob-fill ensemble-fill" style="width: {{ (ensemble_info.ensemble_prob * 100)|round }}%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        {% endif %}
+        
+        <!-- XAI Explanations Section -->
+        {% if has_explanation and explanation %}
+        <div class="explanation-container">
+          <div class="heading_container heading_center">
+            <h2><span>AI Explanation</span></h2>
+          </div>
+          
+          <!-- Basic Prediction Info -->
+          <div class="prediction-summary">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="metric-box">
+                  <h4>Stroke Probability</h4>
+                  <p class="probability-value">{{ "%.1f"|format(explanation['stroke_probability'] * 100) }}%</p>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="metric-box">
+                  <h4>Risk Level</h4>
+                  <p class="risk-level {{ explanation['risk_level'].lower() }}">{{ explanation['risk_level'] }}</p>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="metric-box">
+                  <h4>Model Confidence</h4>
+                  <p class="confidence-value">{{ "%.1f"|format(explanation['confidence'] * 100) }}%</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Risk Factors -->
+          {% if explanation['top_risk_factors'] %}
+          <div class="risk-factors-section">
+            <h3 class="section-title">🚨 Top Risk Factors</h3>
+            <div class="factors-list">
+              {% for factor in explanation['top_risk_factors'][:3] %}
+              <div class="factor-item risk-factor">
+                <span class="factor-name">{{ factor['feature'] }}</span>
+                <span class="factor-impact">Impact: +{{ "%.2f"|format(factor['shap_value']) }}</span>
+                <div class="factor-bar">
+                  <div class="factor-fill risk-fill" style="width: {{ (factor['shap_value'] / explanation['top_risk_factors'][0]['shap_value'] * 100)|round }}%"></div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+          
+          <!-- Protective Factors -->
+          {% if explanation['top_protective_factors'] %}
+          <div class="protective-factors-section">
+            <h3 class="section-title">🛡️ Top Protective Factors</h3>
+            <div class="factors-list">
+              {% for factor in explanation['top_protective_factors'][:3] %}
+              <div class="factor-item protective-factor">
+                <span class="factor-name">{{ factor['feature'] }}</span>
+                <span class="factor-impact">Impact: {{ "%.2f"|format(factor['shap_value']) }}</span>
+                <div class="factor-bar">
+                  <div class="factor-fill protective-fill" style="width: {{ ((factor['shap_value']|abs) / (explanation['top_protective_factors'][0]['shap_value']|abs) * 100)|round }}%"></div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+          
+          <!-- Visualizations -->
+          {% if explanation['visualizations'] %}
+          <div class="visualizations-section">
+            <h3 class="section-title">📊 AI Explanation Charts</h3>
+            <div class="viz-container">
+              {% for viz in explanation['visualizations'] %}
+              <div class="visualization-item">
+                <h4>{{ viz['title'] }}</h4>
+                <div class="viz-display">
+                  {% if viz['format'] == 'base64' %}
+                  <img src="data:image/png;base64,{{ viz['data'] }}" alt="{{ viz['title'] }}" class="explanation-chart">
+                  {% elif viz['format'] == 'html' %}
+                  <div class="html-viz">{{ viz['data']|safe }}</div>
+                  {% endif %}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+          
+          <!-- Medical Context Interpretations -->
+          {% if explanation['medical_context'] %}
+          <div class="medical-interpretations">
+            <h3 class="section-title">🏥 Medical Context</h3>
+            <div class="medical-content">
+              {% if explanation['medical_context']['warnings'] %}
+              <div class="medical-warnings" style="background: #fff3cd; padding: 15px; margin: 15px 0; border-radius: 8px; border-left: 4px solid #ffc107;">
+                <h4 style="margin: 0 0 10px 0; color: #856404;">⚠️ Important Medical Clarifications</h4>
+                {% for warning in explanation['medical_context']['warnings'] %}
+                <p style="margin: 5px 0; color: #856404; font-size: 14px;">• {{ warning }}</p>
+                {% endfor %}
+              </div>
+              {% endif %}
+              
+              <div class="medical-factors">
+                <h4>📋 Medical Factor Analysis</h4>
+                {% for factor in explanation['medical_context']['medical_factors'][:5] %}
+                <div class="medical-factor-item" style="background: white; margin: 10px 0; padding: 12px; border-radius: 6px; border-left: 3px solid {% if 'Risk' in factor['medical_reality'] %}#f44336{% elif 'Protective' in factor['medical_reality'] %}#4caf50{% else %}#2196F3{% endif %};">
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong>{{ factor['feature'] }}</strong>
+                    <span style="color: {% if 'Risk' in factor['medical_reality'] %}#f44336{% elif 'Protective' in factor['medical_reality'] %}#4caf50{% else %}#2196F3{% endif %}; font-size: 12px; font-weight: bold;">{{ factor['medical_reality'] }}</span>
+                  </div>
+                  <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">{{ factor['explanation'] }}</p>
+                  {% if factor['warning'] %}
+                  <p style="margin: 5px 0 0 0; font-size: 13px; color: #d32f2f; font-style: italic;">⚠️ {{ factor['warning'] }}</p>
+                  {% endif %}
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- User-Friendly Explanation -->
+          <div class="explanation-text">
+            <h3 class="section-title">💬 What This Means</h3>
+            <div class="explanation-content">
+              {% if explanation['stroke_probability'] > 0.5 %}
+              <p>The AI model indicates a <strong>{{ explanation['risk_level'].lower() }}</strong> stroke risk based on your health profile. The key factors increasing your risk are: {{ explanation['top_risk_factors'][0]['feature'].lower() }}, {{ explanation['top_risk_factors'][1]['feature'].lower() }}, and {{ explanation['top_risk_factors'][2]['feature'].lower() }}.</p>
+              {% else %}
+              <p>The AI model indicates a <strong>{{ explanation['risk_level'].lower() }}</strong> stroke risk based on your health profile. While some factors like {{ explanation['top_risk_factors'][0]['feature'].lower() }} may increase risk, your overall risk remains relatively low.</p>
+              {% endif %}
+              
+              <p><em>This is an AI-generated prediction for informational purposes only. Please consult with healthcare professionals for medical advice and proper interpretation of risk factors.</em></p>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        
+        {% if error_message %}
+        <div class="error-container">
+          <h3 style="color: red;">Error generating explanation: {{ error_message }}</h3>
+        </div>
+        {% endif %}
+        <style>
+          input[type=submit] {
+            background-color: #0693cd;
+            border: 0;
+            border-radius: 5px;
+            cursor: pointer;
+            color: #fff;
+            font-size:16px;
+            font-weight: bold;
+            line-height: 1.4;
+            padding: 10px;
+            width: 180px
+          }
+          
+          /* Enhanced Risk Assessment Styles */
+          .enhanced-results {
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            border-radius: 10px;
+            text-align: center;
+          }
+          
+          .risk-alert {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+            text-transform: uppercase;
+          }
+          
+          .risk-alert.extreme {
+            color: #d32f2f;
+            text-shadow: 0 0 10px rgba(211, 47, 47, 0.3);
+          }
+          
+          .risk-alert.high {
+            color: #f44336;
+          }
+          
+          .risk-alert.elevated {
+            color: #ff9800;
+          }
+          
+          .risk-alert.moderate {
+            color: #ffc107;
+          }
+          
+          .risk-alert.low {
+            color: #4caf50;
+          }
+          
+          .recommendation {
+            font-size: 16px;
+            color: #333;
+            font-style: italic;
+            margin: 10px 0;
+          }
+          
+          .risk-assessment-container {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #fafafa 0%, #f0f8ff 100%);
+            border-radius: 15px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.1);
+          }
+          
+          .risk-metrics {
+            margin: 25px 0;
+          }
+          
+          .risk-category {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0;
+          }
+          
+          .risk-category.extreme {
+            color: #d32f2f;
+          }
+          
+          .risk-category.high {
+            color: #f44336;
+          }
+          
+          .risk-category.elevated {
+            color: #ff9800;
+          }
+          
+          .risk-category.moderate {
+            color: #ffc107;
+          }
+          
+          .risk-category.low {
+            color: #4caf50;
+          }
+          
+          .clinical-score {
+            font-size: 18px;
+            font-weight: bold;
+            color: #673ab7;
+            margin: 0;
+          }
+          
+          .detection-method {
+            font-size: 14px;
+            color: #666;
+            margin: 0;
+          }
+          
+          .model-comparison {
+            margin: 25px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+          }
+          
+          .model-results {
+            margin: 15px 0;
+          }
+          
+          .model-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 15px 0;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+          }
+          
+          .model-item.ensemble {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: 2px solid #2196F3;
+            font-weight: bold;
+          }
+          
+          .model-name {
+            font-weight: 600;
+            color: #333;
+            flex: 1;
+          }
+          
+          .model-prob {
+            font-weight: bold;
+            color: #2196F3;
+            margin-right: 15px;
+            min-width: 50px;
+          }
+          
+          .prob-bar {
+            width: 150px;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+          }
+          
+          .prob-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #bbdefb 0%, #2196F3 100%);
+            transition: width 0.5s ease;
+          }
+          
+          .ensemble-fill {
+            background: linear-gradient(90deg, #c8e6c9 0%, #4caf50 100%);
+          }
+          
+          /* XAI Explanation Styles */
+          .explanation-container {
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+          }
+          
+          .prediction-summary {
+            margin: 30px 0;
+          }
+          
+          .metric-box {
+            background: white;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+          }
+          
+          .metric-box h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+          }
+          
+          .probability-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2196F3;
+            margin: 0;
+          }
+          
+          .risk-level {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0;
+          }
+          
+          .risk-level.high {
+            color: #f44336;
+          }
+          
+          .risk-level.medium {
+            color: #ff9800;
+          }
+          
+          .risk-level.low {
+            color: #4caf50;
+          }
+          
+          .confidence-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #673ab7;
+            margin: 0;
+          }
+          
+          .section-title {
+            color: #333;
+            margin: 25px 0 15px 0;
+            font-size: 20px;
+            font-weight: bold;
+          }
+          
+          .factors-list {
+            margin: 20px 0;
+          }
+          
+          .factor-item {
+            background: white;
+            margin: 15px 0;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          }
+          
+          .factor-name {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+            flex: 1;
+          }
+          
+          .factor-impact {
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 15px;
+          }
+          
+          .risk-factor .factor-impact {
+            color: #f44336;
+          }
+          
+          .protective-factor .factor-impact {
+            color: #4caf50;
+          }
+          
+          .factor-bar {
+            width: 100px;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+          }
+          
+          .factor-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+          }
+          
+          .risk-fill {
+            background: linear-gradient(90deg, #ffcdd2 0%, #f44336 100%);
+          }
+          
+          .protective-fill {
+            background: linear-gradient(90deg, #c8e6c9 0%, #4caf50 100%);
+          }
+          
+          .visualizations-section {
+            margin: 30px 0;
+          }
+          
+          .viz-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+          }
+          
+          .visualization-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            max-width: 500px;
+            text-align: center;
+          }
+          
+          .visualization-item h4 {
+            color: #333;
+            margin-bottom: 15px;
+          }
+          
+          .explanation-chart {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+          }
+          
+          .html-viz {
+            width: 100%;
+            overflow: hidden;
+          }
+          
+          .explanation-text {
+            background: white;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+          }
+          
+          .explanation-content p {
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 15px;
+          }
+          
+          .explanation-content em {
+            color: #666;
+            font-size: 14px;
+          }
+          
+          .error-container {
+            background: #ffebee;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 4px solid #f44336;
+          }
+          
+          /* Responsive design */
+          @media (max-width: 768px) {
+            .explanation-container {
+              padding: 20px 15px;
+            }
+            
+            .metric-box {
+              margin: 10px 0;
+            }
+            
+            .factor-item {
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 10px;
+            }
+            
+            .factor-bar {
+              width: 100%;
+            }
+            
+            .viz-container {
+              flex-direction: column;
+              align-items: center;
+            }
+          }
+        </style>
+      </form>
+      </div>
+    </div>
+  </section>
+  <br>
+  <br>
+  
+  <!-- end team section -->
+  {% endblock %}

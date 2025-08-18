@@ -1,0 +1,48 @@
+{% extends "base2.html" %}
+
+{% block title %}Upload{% endblock %}
+
+{% block content %}
+  <!-- service section -->
+  <section class="service_section layout_padding">
+    <div class="service_container">
+      <div class="container ">
+        <div class="heading_container heading_center">
+          <h2><span>Upload</span></h2>
+        </div>
+        <div class="row text-center">
+          {% if filename %}
+          <div class="file-info" style="margin-bottom: 20px;">
+            <h4>📄 File: {{ filename }}</h4>
+            {% if total_rows %}
+            <p>📊 Total Rows: {{ total_rows }} | Showing: {{ df_view.shape[0] }} rows, {{ df_view.shape[1] }} columns</p>
+            {% endif %}
+          </div>
+          {% endif %}
+
+            <div class="row" style="overflow: scroll; max-height: 500px; max-width: 1500px;">
+                <div >{{ df_view.to_html(classes="table striped",na_rep="-") | safe}}</div>
+            </div>
+            <br>
+            <br>
+            <div class="form-group" style="padding:0px 250px 10px 40px;height:200px">
+                <input style="margin-left:350px" type="button" onclick="hideLoader()" class="btn btn-primary" value="Click to Train | Test" />
+                <div id="loading" style="display:None;margin-top:552950px">
+                </div>
+            </div>
+            </br>
+            <script type='text/javascript'>
+                function hideLoader() {  
+                $('#loading').show(0).delay(10000).hide(0,function(){
+                    alert("Training finished!");
+                    window.location = "{{url_for('prediction')}}";
+                });    
+                }
+            </script>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- end service section -->
+  {% endblock %}

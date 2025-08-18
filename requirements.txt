@@ -1,0 +1,15 @@
+pandas==2.0.0
+ numpy==1.23.5
+ scikit-learn==1.2.2
+ xgboost==2.0.3
+
+seaborn==0.12.2
+ matplotlib==3.7.1
+
+ flask==2.2.5
+
+#python 3.8
+
+#data = 5110 , columns =11
+
+#example-admin = admin@gmail.com , admin
