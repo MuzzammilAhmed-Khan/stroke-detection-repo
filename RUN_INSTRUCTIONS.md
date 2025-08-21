@@ -9,9 +9,13 @@
 ## 🐍 Installing Python (If You Don't Have It)
 
 ### Check if Python is Already Installed
-1. Open terminal (see Step 1 below for how)
-2. Type: `python --version` or `python3 --version`
-3. If you see something like "Python 3.x.x", you're good to go!
+1. Open terminal/command prompt (see Step 1 below for how)
+2. Try these commands (try all until one works):
+   - `python --version`
+   - `python3 --version`
+   - `py --version` (Windows)
+3. If you see "Python 3.8.x" or higher (like 3.9, 3.10, 3.11, 3.12), you're good to go!
+4. If you see Python 2.x.x or get an error, you need to install Python 3.8+
 
 ### If Python is Not Installed:
 
@@ -59,15 +63,20 @@ Once you have the files on your computer:
    ```
    > Replace `/path/to/your/stroke-detection` with the actual folder path
 
-2. **Create a virtual environment**:
+2. **Create a virtual environment** (use the command that worked for checking your Python version):
    ```bash
-   python3 -m venv stroke_prediction_env
+   # Try one of these commands:
+   python3 -m venv stroke_prediction_env     # Linux/Mac
+   python -m venv stroke_prediction_env      # Windows/Some Linux
+   py -m venv stroke_prediction_env          # Windows (Microsoft Store Python)
    ```
    ⏱️ **Wait time**: This takes 1-2 minutes
 
 3. **Activate the environment**:
    - **Linux/Mac**: `source stroke_prediction_env/bin/activate`
-   - **Windows**: `stroke_prediction_env\Scripts\activate`
+   - **Windows (Command Prompt)**: `stroke_prediction_env\Scripts\activate`
+   - **Windows (PowerShell)**: `stroke_prediction_env\Scripts\Activate.ps1`
+   - **Windows (Git Bash)**: `source stroke_prediction_env/Scripts/activate`
 
 4. **Install all required packages**:
    ```bash
@@ -98,53 +107,82 @@ cd /path/to/your/stroke-detection
 ### Step 3: Activate the Python Environment
 This prepares Python to run our application:
 - **Linux/Mac**: `source stroke_prediction_env/bin/activate`
-- **Windows**: `stroke_prediction_env\Scripts\activate`
+- **Windows (Command Prompt)**: `stroke_prediction_env\Scripts\activate`
+- **Windows (PowerShell)**: `stroke_prediction_env\Scripts\Activate.ps1`
+- **Windows (Git Bash)**: `source stroke_prediction_env/Scripts/activate`
 
 ✅ **Success indicator**: You should see `(stroke_prediction_env)` at the start of your command line
 
-### Step 4: Go to the Application Code
+### Step 4: Verify You're in the Right Directory
+**Note**: The application files (like app.py) should be in the main directory where you are. You can verify by listing the files:
+
+**Linux/Mac/Git Bash:**
 ```bash
-cd CODE
+ls
 ```
+
+**Windows (Command Prompt):**
+```cmd
+dir
+```
+
+You should see files like `app.py`, `requirements.txt`, and folders like `templates`, `static`.
 
 ### Step 5: Install Required Software Packages
 This downloads all the tools our application needs:
+
+**Option A: Install from requirements file (recommended):**
 ```bash
-pip install flask numpy pandas scikit-learn xgboost seaborn matplotlib
+pip install -r requirements.txt
 ```
-⏱️ **Wait time**: This may take 2-3 minutes to complete
+⏱️ **Wait time**: This may take 5-10 minutes to complete
+
+**Option B: If Option A fails or times out, install packages individually:**
+```bash
+pip install flask numpy pandas scikit-learn xgboost matplotlib seaborn openpyxl
+```
+⏱️ **Wait time**: This may take 8-12 minutes to complete
+
+**Note**: Package installation times vary based on your internet connection and computer speed. Be patient and let the process complete.
 
 ### Step 6: Start the Application
+Use the same Python command that worked for you earlier:
 ```bash
-python app.py
+# Try one of these commands:
+python app.py        # Most common
+python3 app.py       # Linux/Mac
+py app.py            # Windows (Microsoft Store Python)
 ```
 
 🎉 **Success!** You should see messages like:
-- "XAI Engine ready for explanations!"
-- "Running on http://127.0.0.1:5000"
+- "🚀 Initializing XAI Engine..."
+- "✅ XAI Engine ready for explanations!"
+- "Running on http://127.0.0.1:5002"
+
+**Note**: The application runs on port 5002. If you see a message about port being in use, the application will automatically try the next available port.
 
 ### Step 7: Open the Application in Your Browser
 Click this link or copy it to your web browser:
-**http://127.0.0.1:5000**
+**http://127.0.0.1:5002**
 
 ## 🌐 What Can This Application Do?
 
 ### 🏠 Main Pages You Can Visit
 Once the app is running, you can access these pages in your browser:
 
-1. **Home Page**: http://127.0.0.1:5000/
+1. **Home Page**: http://127.0.0.1:5002/
    - Main landing page with information about the app
 
-2. **Individual Prediction**: http://127.0.0.1:5000/prediction
+2. **Individual Prediction**: http://127.0.0.1:5002/prediction
    - Enter a person's health information to predict stroke risk
    - Get instant results with explanations
 
-3. **Admin Login**: http://127.0.0.1:5000/login
+3. **Admin Login**: http://127.0.0.1:5002/login
    - Username: `admin@gmail.com`
    - Password: `admin`
    - Access data upload features
 
-4. **Data Upload**: http://127.0.0.1:5000/upload (after login)
+4. **Data Upload**: http://127.0.0.1:5002/upload (after login)
    - Upload Excel or CSV files with multiple patients' data
    - Process many predictions at once
 
@@ -183,14 +221,16 @@ pip install matplotlib
 pip install seaborn
 ```
 
-### Problem 3: "Address already in use" or "Port 5000 busy"
+### Problem 3: "Address already in use" or "Port busy"
 **What this means:** Another program is using the same web address
 **What to do:**
 1. Open the file `app.py` in a text editor
-2. Find the last line that says: `app.run(debug=True)`
-3. Change it to: `app.run(debug=True, port=5001)`
+2. Find the last line that says: `app.run(debug=True, port=XXXX)`
+3. Change the port number to a different one (try 5003, 5004, etc.)
 4. Save the file and run the app again
-5. Now visit: http://127.0.0.1:5001 instead
+5. Now visit: http://127.0.0.1:[NEW_PORT] instead
+
+**Example**: If you change to port 5003, visit http://127.0.0.1:5003
 
 ### Problem 4: "Python not found" 
 **What to do:**
@@ -220,23 +260,33 @@ pip install seaborn
 cd /path/to/your/stroke-detection
 
 # Activate Python environment
-source stroke_prediction_env/bin/activate    # Linux/Mac
+source stroke_prediction_env/bin/activate              # Linux/Mac
 # OR
-stroke_prediction_env\Scripts\activate       # Windows
+stroke_prediction_env\Scripts\activate                 # Windows (Command Prompt)
+# OR  
+stroke_prediction_env\Scripts\Activate.ps1             # Windows (PowerShell)
+# OR
+source stroke_prediction_env/Scripts/activate          # Windows (Git Bash)
 
-# Go to code folder
-cd CODE
+# Verify you're in the right directory (should see app.py)
+ls          # Linux/Mac/Git Bash
+# OR
+dir         # Windows Command Prompt
 
-# Start the app
-python app.py
+# Start the app (use the Python command that works for you)
+python app.py        # Most common
+# OR
+python3 app.py       # Linux/Mac  
+# OR
+py app.py            # Windows (Microsoft Store Python)
 
-# Open in browser: http://127.0.0.1:5000
+# Open in browser: http://127.0.0.1:5002
 ```
 
 ### Important URLs
-- **Main App**: http://127.0.0.1:5000
-- **Predictions**: http://127.0.0.1:5000/prediction  
-- **Login**: http://127.0.0.1:5000/login (admin@gmail.com / admin)
+- **Main App**: http://127.0.0.1:5002
+- **Predictions**: http://127.0.0.1:5002/prediction  
+- **Login**: http://127.0.0.1:5002/login (admin@gmail.com / admin)
 
 ### Stop the App
 - Press `Ctrl + C` in terminal

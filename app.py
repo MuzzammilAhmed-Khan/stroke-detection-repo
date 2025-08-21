@@ -2,8 +2,8 @@ from flask import Flask, render_template, request, url_for, session, redirect, f
 import numpy as np
 import pandas as pd
 import pickle
-from xai_integration import StrokeXAIEngine
-from enhanced_ordinal_classifier import EnhancedOrdinalStrokeClassifier
+# from xai_integration import StrokeXAIEngine
+# from enhanced_ordinal_classifier import EnhancedOrdinalStrokeClassifier
 
 app = Flask(__name__)
 app.secret_key = 'your secret key'
@@ -15,26 +15,26 @@ with open('enhanced_XGB_RFstroke.pkl', 'rb') as model2_file:
     model2 = pickle.load(model2_file)
 
 # Load enhanced ordinal classifier
-try:
-    with open('model/enhanced_ordinal_classifier.pkl', 'rb') as ordinal_file:
-        ordinal_classifier = pickle.load(ordinal_file)
-    print("✅ Enhanced Ordinal Risk Classifier loaded successfully!")
-    use_ordinal_classifier = True
-except FileNotFoundError:
-    try:
-        with open('model/ordinal_stroke_classifier.pkl', 'rb') as ordinal_file:
-            ordinal_classifier = pickle.load(ordinal_file)
-        print("✅ Standard Ordinal Risk Classifier loaded successfully!")
-        use_ordinal_classifier = True
-    except FileNotFoundError:
-        print("⚠️ No ordinal classifier found, using ensemble approach")
-        ordinal_classifier = None
-        use_ordinal_classifier = False
+# try:
+#     with open('model/enhanced_ordinal_classifier.pkl', 'rb') as ordinal_file:
+#         ordinal_classifier = pickle.load(ordinal_file)
+#     print("✅ Enhanced Ordinal Risk Classifier loaded successfully!")
+#     use_ordinal_classifier = True
+# except FileNotFoundError:
+#     try:
+#         with open('model/ordinal_stroke_classifier.pkl', 'rb') as ordinal_file:
+#             ordinal_classifier = pickle.load(ordinal_file)
+#         print("✅ Standard Ordinal Risk Classifier loaded successfully!")
+#         use_ordinal_classifier = True
+#     except FileNotFoundError:
+#         print("⚠️ No ordinal classifier found, using ensemble approach")
+ordinal_classifier = None
+use_ordinal_classifier = False
 
 # Initialize XAI Engine
 print("🚀 Initializing XAI Engine...")
-xai_engine = StrokeXAIEngine()
-xai_engine.initialize()
+# xai_engine = StrokeXAIEngine()
+# xai_engine.initialize()
 print("✅ XAI Engine ready for explanations!")
 
 #======================================================================== ENHANCED RISK ASSESSMENT FUNCTIONS =============================================================================================================
@@ -300,7 +300,8 @@ def predictions():
             result = prediction_result['alert_level']
             
             print("🔍 Generating explanations...")
-            explanation = xai_engine.explain_prediction_for_web(input_dict)
+            # explanation = xai_engine.explain_prediction_for_web(input_dict)
+            explanation = None
             print("✅ Explanations generated successfully!")
             
             return render_template("prediction.html", 
@@ -352,7 +353,8 @@ def api_explain():
             return jsonify({"error": "No input data provided"}), 400
         
         print(f"🔍 API explanation request: {data}")
-        explanation = xai_engine.explain_prediction_for_web(data)
+        # explanation = xai_engine.explain_prediction_for_web(data)
+        explanation = None
         print("✅ API explanation generated successfully!")
         
         return jsonify(explanation)
@@ -362,4 +364,4 @@ def api_explain():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5002)
